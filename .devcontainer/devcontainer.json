@@ -1,0 +1,8 @@
+// See https://containers.dev/implementors/json_reference/ for configuration reference
+{
+	"name": "ETHDenver2023",
+	"build": {
+		"dockerfile": "Dockerfile"
+	},
+  "remoteUser": "node"
+}
