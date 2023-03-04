@@ -1,4 +1,4 @@
-# ETHDenver2023 - W3Care
+# ETHDenver2023 - W3Care.ai
 DAPP built on top of the Lens Protocol, and ZkBob to facilitate micro donations and community support to people suffering from homelessness.
 
 # Motivation

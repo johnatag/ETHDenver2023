@@ -4,5 +4,13 @@
 	"build": {
 		"dockerfile": "Dockerfile"
 	},
-  "remoteUser": "node"
+"remoteUser": "node",
+"customizations": {
+	"vscode": {
+		"extensions": [
+			"mquandalle.graphql",
+			"xabikos.ReactSnippets"
+		]
+	}
+}
 }
