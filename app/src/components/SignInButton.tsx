@@ -4,7 +4,6 @@ import { useState } from "react";
 import { magic } from "../libs/magic";
 import Web3 from 'web3';
 
-
 import {
     useAddress,
     useNetworkMismatch,
@@ -20,8 +19,8 @@ export default function SignInButton(props: {
 
     const [accountAdress, setAccountAdress] = useState('' as string);
 
-    const { isSignedInQuery, profileQuery } = useLensUser();
-    const { mutate: requestLogin } = useLogin();
+    const { isSignedInQuery, profileQuery } = useLensUser()!;
+    //const { mutate: requestLogin } = useLogin()!;
     const isOnWrongNetwork = useNetworkMismatch(); // Detect if the user is on the wrong network
     const [, switchNetwork] = useNetwork(); // Function to switch the network.
 
@@ -46,42 +45,33 @@ export default function SignInButton(props: {
     </div>
     }
 
-     // 2. User needs to switch network to Polygon
-  if (isOnWrongNetwork) {
-    return (
-      <button onClick={() => switchNetwork?.(ChainId.Polygon)}>
-        Switch Network
-      </button>
-    );
-  }
-
   // Loading their signed in state
-  if (isSignedInQuery.isLoading) {
+  if (isSignedInQuery(accountAdress).isLoading) {
     return <div>Loading...</div>;
   }
 
   // If the user is not signed in, we need to request a login
-  if (!isSignedInQuery.data) {
-    return <button onClick={() => requestLogin()}>Sign in with Lens</button>;
+  if (!isSignedInQuery(accountAdress).data) {
+    return <button>Sign in with Lens</button>;
   }
 
   // Loading their profile information
-  if (profileQuery.isLoading) {
+  if (profileQuery(accountAdress).isLoading) {
     return <div>Loading...</div>;
   }
 
   // If it's done loading and there's no default profile
-  if (!profileQuery.data?.defaultProfile) {
+  if (!profileQuery(accountAdress).data?.defaultProfile) {
     return <div>No Lens Profile.</div>;
   }
     // If it's done loading and there's a default profile
-  if (profileQuery.data?.defaultProfile) {
+  if (profileQuery(accountAdress).data?.defaultProfile) {
     return (
       <div>
         <MediaRenderer
           // @ts-ignore
-          src={profileQuery?.data?.defaultProfile?.picture?.original?.url || ""}
-          alt={profileQuery.data.defaultProfile.name || ""}
+          src={profileQuery(accountAdress)?.data?.defaultProfile?.picture?.original?.url || ""}
+          alt={profileQuery(accountAdress)?.data?.defaultProfile?.name || ""}
           style={{
             width: 48,
             height: 48,
