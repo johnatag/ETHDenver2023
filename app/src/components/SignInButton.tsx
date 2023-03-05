@@ -1,77 +1,66 @@
-import useLensUser from "../libs/auth/useLensUser";
-import useLogin from "../libs/auth/useLogin";
-import { useState } from "react";
-import { magic } from "../libs/magic";
-import Web3 from 'web3';
-
 import {
-    useAddress,
-    useNetworkMismatch,
-    useNetwork,
-    ConnectWallet,
-    ChainId,
-    MediaRenderer,
-  } from "@thirdweb-dev/react";
+  useAddress,
+  useNetworkMismatch,
+  useNetwork,
+  ConnectWallet,
+  ChainId,
+  MediaRenderer,
+} from "@thirdweb-dev/react";
+import React from "react";
+import useLensUser from "../lib/auth/useLensUser";
+import useLogin from "../lib/auth/useLogin";
 
-export default function SignInButton(props: {
-    isTokenHolder: Function
-}) {
+type Props = {};
 
-    const [accountAdress, setAccountAdress] = useState('' as string);
+export default function SignInButton({}: Props) {
+  const address = useAddress(); // Detect the connected address
+  const isOnWrongNetwork = useNetworkMismatch(); // Detect if the user is on the wrong network
+  const [, switchNetwork] = useNetwork(); // Function to switch the network.
+  const { isSignedInQuery, profileQuery } = useLensUser();
+  const { mutate: requestLogin } = useLogin();
 
-    const { isSignedInQuery, profileQuery } = useLensUser()!;
-    //const { mutate: requestLogin } = useLogin()!;
-    const isOnWrongNetwork = useNetworkMismatch(); // Detect if the user is on the wrong network
-    const [, switchNetwork] = useNetwork(); // Function to switch the network.
+  // 1. User needs to connect their wallet
+  if (!address) {
+    return <ConnectWallet />;
+  }
 
-    let handleWalletLogin = async () => {
-        if (magic && typeof window !== 'undefined') {
-            //@ts-ignore
-            const web3 = new Web3(magic.rpcProvider);
-            await magic.wallet.connectWithUI()
-                .then((response) => {
-                    setAccountAdress(response[0]);
-                }).catch((error: any) => {
-                    console.log(error);
-                });
-        }
-    }
-
-    if(accountAdress == '') {
-        return <div>
-        <button onClick={() => {
-            handleWalletLogin();
-        }}>Connect</button>
-    </div>
-    }
+  // 2. User needs to switch network to Polygon
+  if (isOnWrongNetwork) {
+    return (
+      <button onClick={() => switchNetwork?.(ChainId.Mumbai)}>
+        Switch Network
+      </button>
+    );
+  }
 
   // Loading their signed in state
-  if (isSignedInQuery(accountAdress).isLoading) {
+  if (isSignedInQuery.isLoading) {
     return <div>Loading...</div>;
   }
 
   // If the user is not signed in, we need to request a login
-  if (!isSignedInQuery(accountAdress).data) {
-    return <button>Sign in with Lens</button>;
+  if (!isSignedInQuery.data) {
+    return <button onClick={() => requestLogin()}>Sign in with Lens</button>;
   }
 
   // Loading their profile information
-  if (profileQuery(accountAdress).isLoading) {
+  if (profileQuery.isLoading) {
     return <div>Loading...</div>;
   }
 
   // If it's done loading and there's no default profile
-  if (!profileQuery(accountAdress).data?.defaultProfile) {
+  if (!profileQuery.data?.defaultProfile) {
     return <div>No Lens Profile.</div>;
   }
-    // If it's done loading and there's a default profile
-  if (profileQuery(accountAdress).data?.defaultProfile) {
+
+  // If it's done loading and there's a default profile
+  if (profileQuery.data?.defaultProfile) {
     return (
       <div>
         <MediaRenderer
           // @ts-ignore
-          src={profileQuery(accountAdress)?.data?.defaultProfile?.picture?.original?.url || ""}
-          alt={profileQuery(accountAdress)?.data?.defaultProfile?.name || ""}
+          src={profileQuery?.data?.defaultProfile?.picture?.original?.url || ""}
+          alt={profileQuery.data.defaultProfile.name || ""}
           style={{
             width: 48,
             height: 48,
@@ -82,5 +71,5 @@ export default function SignInButton(props: {
     );
   }
 
-    return <>Error</>
+  return <div>Something went wrong.</div>;
 }
