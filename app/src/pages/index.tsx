@@ -41,9 +41,10 @@ export default function Home() {
 
       {/* Iterate over the array of items inside the data field  */}
       <div className={styles.postsContainer}>
-        {data?.feed.items.map((publication) => (
+        Nothing to see...
+        {/* {data?.feed.items.map((publication) => (
           <FeedPost publication={publication} key={publication.root.id} />
-        ))}
+        ))} */}
       </div>
     </div>
   );
