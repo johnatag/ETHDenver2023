@@ -1,10 +1,5 @@
-import { TypedDataDomain } from "ethers"
-
-import { isTokenExpired, readAccessToken } from "../libs/auth/helpers";
-import refreshAccessToken from "../libs/auth/refreshAccessToken";
-
-const endpoint = "https://api-mumbai.lens.dev/"
-
+import { isTokenExpired, readAccessToken } from "../lib/auth/helpers";
+import refreshAccessToken from "../lib/auth/refreshAccessToken";
 
 export const fetcher = <TData, TVariables>(
   query: string,
@@ -35,7 +30,7 @@ export const fetcher = <TData, TVariables>(
   return async () => {
     const token = typeof window !== "undefined" ? await getAccessToken() : null;
 
-    const res = await fetch(endpoint, {
+    const res = await fetch("https://api-mumbai.lens.dev/", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

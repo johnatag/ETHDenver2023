@@ -1,24 +1,23 @@
-import '../styles/globals.css'
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-import type { AppProps } from 'next/app'
-import { useEffect, useState } from 'react';
-import { useRouter } from 'next/router';
-import { magic } from '../libs/magic';
-import { ChainId, ThirdwebProvider } from '@thirdweb-dev/react';
-
+import "../styles/globals.css";
+import type { AppProps } from "next/app";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ThirdwebProvider, ChainId } from "@thirdweb-dev/react";
+import Header from "../components/Header";
 
 export default function App({ Component, pageProps }: AppProps) {
-  
+  // the chainId our app wants to be running on
+  // for our example the Polygon Mumbai Testnet
+  const desiredChainId = ChainId.Mumbai;
+
   // Create a client
   const queryClient = new QueryClient();
-  const desiredChainId = ChainId.Mumbai;
-  
+
   return (
     <ThirdwebProvider desiredChainId={desiredChainId}>
       <QueryClientProvider client={queryClient}>
-      <Component {...pageProps} />
-    </QueryClientProvider>
+        <Header />
+        <Component {...pageProps} />
+      </QueryClientProvider>
     </ThirdwebProvider>
-    
-  )
+  );
 }
