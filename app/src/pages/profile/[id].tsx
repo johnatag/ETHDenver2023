@@ -106,18 +106,7 @@ export default function ProfilePage({}: Props) {
         >
           Follow User
         </Web3Button>
-
-        <div className={styles.publicationsContainer}>
-          {isLoadingPublications ? (
-            <div>Loading Publications...</div>
-          ) : (
-            // Iterate over the items in the publications array
-            publicationsData?.publications.items.map((publication) => (
-              <FeedPost publication={publication} key={publication.id} />
-            ))
-          )}
         </div>
       </div>
-    </div>
   );
 }
